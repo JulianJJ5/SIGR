@@ -49,5 +49,5 @@ const vista = computed(() => {
   </template>
 
   <div v-if="aviso" class="aviso" :class="aviso.tipo">{{ aviso.texto }}</div>
-  <footer>SIGR v1.0.0 · línea base · prototipo académico</footer>
+  <footer>SIGR v1.1.0 · prototipo académico · fotos de <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a></footer>
 </template>
