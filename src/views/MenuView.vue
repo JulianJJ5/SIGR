@@ -44,8 +44,8 @@ function enviarPedido() {
 
 // ----- CRUD (administrador) -----
 const nuevaCategoria = ref("");
-const formPlato = reactive({ id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true });
-function limpiarPlato() { Object.assign(formPlato, { id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true }); }
+const formPlato = reactive({ id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagen: "" });
+function limpiarPlato() { Object.assign(formPlato, { id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagen: "" }); }
 function editar(p) { Object.assign(formPlato, { ...p }); window.scrollTo({ top: 0, behavior: "smooth" }); }
 function guardarPlato() {
   const ok = formPlato.id
@@ -61,6 +61,12 @@ function renombrar(c) {
 </script>
 
 <template>
+  <div class="hero" style="background-image: url('/img/hero.jpg')">
+    <div>
+      <h2>Sabores de la casa</h2>
+      <p>{{ esAdmin ? "Administre el menú: platos, precios, fotos y disponibilidad." : "Elija sus platos y envíe el pedido directo a la cocina." }}</p>
+    </div>
+  </div>
   <div class="dos-columnas">
     <section>
       <div v-if="esAdmin" class="tarjeta">
@@ -75,6 +81,7 @@ function renombrar(c) {
             </select>
           </label>
           <label>Descripción <input v-model="formPlato.descripcion" /></label>
+          <label>Imagen (URL o ruta /img/…) <input v-model="formPlato.imagen" placeholder="/img/empanadas.jpg" /></label>
           <label class="check"><input v-model="formPlato.disponible" type="checkbox" /> Disponible</label>
           <div class="fila">
             <button type="submit">{{ formPlato.id ? "Guardar cambios" : "Crear plato" }}</button>
@@ -98,7 +105,9 @@ function renombrar(c) {
         </div>
         <p v-if="!c.platos.length" class="nota">Sin platos.</p>
         <div v-for="p in c.platos" :key="p.id" class="plato" :class="{ apagado: !p.disponible }">
-          <div>
+          <img v-if="p.imagen" class="miniatura" :src="p.imagen" :alt="p.nombre" loading="lazy" />
+          <div v-else class="miniatura vacia">🍽️</div>
+          <div class="info-plato">
             <strong>{{ p.nombre }}</strong> <span v-if="!p.disponible" class="etiqueta">no disponible</span>
             <div class="nota">{{ p.descripcion }}</div>
           </div>
