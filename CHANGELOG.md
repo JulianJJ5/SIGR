@@ -7,6 +7,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 Los cambios posteriores a la línea base se registran aquí y se controlan mediante solicitudes de cambio (GitHub Issues) y ramas `feature/` o `fix/` que se integran por `develop`.
 
+## [1.1.1] - 2026-11-07
+
+### Corregido
+- Pantalla en blanco en GitHub Pages: Pages servía el código fuente sin compilar. Se agregó el flujo `.github/workflows/pages.yml`, que compila y publica `dist/`.
+- Las rutas de la app y de las imágenes son relativas (`base: "./"` y `rutaImagen()`), para que carguen en la subcarpeta `/SIGR/`.
+
 ## [1.1.0] - 2026-11-07
 
 ### Agregado
@@ -31,6 +37,7 @@ Los cambios posteriores a la línea base se registran aquí y se controlan media
 ### Corregido
 - Las fechas de pedidos, facturas, reservas y cierres usan el día local y no el UTC, para que la caja no cambie de día a las 7 p. m. (hora de Colombia).
 
-[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.1.0...HEAD
+[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/JulianJJ5/SIGR/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/JulianJJ5/SIGR/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JulianJJ5/SIGR/releases/tag/v1.0.0
