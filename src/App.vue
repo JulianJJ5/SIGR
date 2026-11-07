@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { sesion, salir, aviso } from "./store.js";
+import { sesion, salir, aviso, apiDisponible } from "./store.js";
 import { PERMISOS } from "./services/auth.js";
 import LoginForm from "./components/LoginForm.vue";
 import MenuView from "./views/MenuView.vue";
@@ -28,6 +28,10 @@ const vista = computed(() => {
 <template>
   <header class="barra">
     <div class="marca">🍽️ SIGR <small>Sistema Integral de Gestión de Restaurante</small></div>
+    <span class="estado-api" :class="apiDisponible ? 'en-linea' : 'local'" data-testid="estado-api"
+      :title="apiDisponible ? 'El menú y las reservas se guardan en la API' : 'La API no responde: los cambios se guardan solo en este navegador'">
+      {{ apiDisponible === null ? "Conectando…" : apiDisponible ? "API conectada" : "Modo local (sin API)" }}
+    </span>
     <div v-if="sesion" class="usuario">
       {{ sesion.nombre }} · <span class="rol">{{ sesion.rol }}</span>
       <button class="secundario" @click="salir">Salir</button>
@@ -48,6 +52,6 @@ const vista = computed(() => {
     <main><component :is="vista" @ir="actual = $event" /></main>
   </template>
 
-  <div v-if="aviso" class="aviso" :class="aviso.tipo">{{ aviso.texto }}</div>
-  <footer>SIGR v1.1.1 · prototipo académico · fotos de <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a></footer>
+  <div v-if="aviso" class="aviso" :class="aviso.tipo" data-testid="aviso" role="status">{{ aviso.texto }}</div>
+  <footer>SIGR v1.2.0 · prototipo académico · fotos de <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a></footer>
 </template>
