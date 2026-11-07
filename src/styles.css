@@ -86,3 +86,8 @@ footer { text-align: center; color: var(--suave); font-size: 0.8rem; margin-top:
   background: linear-gradient(rgba(30, 18, 10, 0.45), rgba(30, 18, 10, 0.45)), url("../public/img/login.jpg") center / cover; }
 .fondo-login .login { margin: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
 footer a { color: var(--suave); }
+
+.estado-api { font-size: 0.8rem; padding: 3px 10px; border-radius: 12px; background: #eee; color: var(--suave); }
+.estado-api.en-linea { background: #d3f2dc; color: var(--ok); }
+.estado-api.local { background: #fff3cd; color: #8a6d00; }
+.error-campo { color: var(--error); font-size: 0.8rem; }
