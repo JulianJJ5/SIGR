@@ -38,6 +38,8 @@ npm run build     # compilación de producción en dist/
 npm run preview   # sirve la compilación de dist/
 ```
 
+Versión publicada: https://julianjj5.github.io/SIGR/ (se actualiza sola en cada push a `main`).
+
 ## Usuarios de demostración
 
 | Rol | Usuario | Contraseña | Ve |
