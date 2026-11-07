@@ -38,6 +38,7 @@ export function crearPlato(db, datos) {
     precio: Number(datos.precio),
     categoriaId: Number(datos.categoriaId),
     disponible: datos.disponible !== false,
+    imagen: (datos.imagen || "").trim(),
   };
   db.platos.push(p);
   return p;
@@ -53,6 +54,7 @@ export function editarPlato(db, id, datos) {
     precio: Number(datos.precio),
     categoriaId: Number(datos.categoriaId),
     disponible: datos.disponible !== false,
+    imagen: (datos.imagen || "").trim(),
   });
   return p;
 }

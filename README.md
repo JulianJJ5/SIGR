@@ -81,6 +81,7 @@ sigr/
 - [Manual de despliegue](docs/MANUAL_DESPLIEGUE.md)
 - [Acta de línea base](docs/LINEA_BASE.md)
 - [Historial de cambios](CHANGELOG.md)
+- [Créditos de las imágenes](docs/CREDITOS_IMAGENES.md)
 
 ## Licencia
 
