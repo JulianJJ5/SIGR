@@ -83,6 +83,6 @@ footer { text-align: center; color: var(--suave); font-size: 0.8rem; margin-top:
 .hero h2 { color: #fff; font-size: 1.7rem; margin: 0 0 4px; }
 .hero p { margin: 0; opacity: 0.9; }
 .fondo-login { min-height: 70vh; display: grid; place-items: center; border-radius: 14px; padding: 24px; margin-top: 8px;
-  background: linear-gradient(rgba(30, 18, 10, 0.45), rgba(30, 18, 10, 0.45)), url("/img/login.jpg") center / cover; }
+  background: linear-gradient(rgba(30, 18, 10, 0.45), rgba(30, 18, 10, 0.45)), url("../public/img/login.jpg") center / cover; }
 .fondo-login .login { margin: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
 footer a { color: var(--suave); }

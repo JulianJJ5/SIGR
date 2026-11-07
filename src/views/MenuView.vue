@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
 import { db, sesion, mutar } from "../store.js";
+import { rutaImagen } from "../db/storage.js";
 import * as menu from "../services/menu.js";
 import { crearPedido } from "../services/pedidos.js";
 import { pesos } from "../services/caja.js";
@@ -61,7 +62,7 @@ function renombrar(c) {
 </script>
 
 <template>
-  <div class="hero" style="background-image: url('/img/hero.jpg')">
+  <div class="hero" :style="{ backgroundImage: `url(${rutaImagen('/img/hero.jpg')})` }">
     <div>
       <h2>Sabores de la casa</h2>
       <p>{{ esAdmin ? "Administre el menú: platos, precios, fotos y disponibilidad." : "Elija sus platos y envíe el pedido directo a la cocina." }}</p>
@@ -105,7 +106,7 @@ function renombrar(c) {
         </div>
         <p v-if="!c.platos.length" class="nota">Sin platos.</p>
         <div v-for="p in c.platos" :key="p.id" class="plato" :class="{ apagado: !p.disponible }">
-          <img v-if="p.imagen" class="miniatura" :src="p.imagen" :alt="p.nombre" loading="lazy" />
+          <img v-if="p.imagen" class="miniatura" :src="rutaImagen(p.imagen)" :alt="p.nombre" loading="lazy" />
           <div v-else class="miniatura vacia">🍽️</div>
           <div class="info-plato">
             <strong>{{ p.nombre }}</strong> <span v-if="!p.disponible" class="etiqueta">no disponible</span>
