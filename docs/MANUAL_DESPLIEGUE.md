@@ -25,7 +25,7 @@ Genera la carpeta `dist/` con archivos estáticos (`index.html`, JavaScript y CS
 
 Como la línea base no tiene servidor propio (los datos viven en el navegador), `dist/` se puede publicar en cualquier hosting de archivos estáticos:
 
-- **GitHub Pages:** subir `dist/` a la rama `gh-pages` o usar una acción de GitHub; si el sitio queda en una subruta (`/sigr/`), agregar `base: "/sigr/"` en `vite.config.js` antes de compilar.
+- **GitHub Pages (desde v1.1.1):** el flujo `.github/workflows/pages.yml` instala, prueba, compila y publica `dist/` en cada push a `main`. Solo hay que elegir una vez **Settings → Pages → Source: GitHub Actions**. No sirve «Deploy from a branch» con `main`: publicaría el código fuente sin compilar y se vería una pantalla en blanco. La app usa `base: "./"`, así que funciona en la subruta `https://julianjj5.github.io/SIGR/`.
 - **Netlify o Vercel:** comando de compilación `npm run build`, carpeta de publicación `dist`.
 - **Servidor propio (Nginx, Apache, IIS):** copiar el contenido de `dist/` a la carpeta pública del sitio.
 

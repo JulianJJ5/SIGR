@@ -28,6 +28,13 @@ function completarImagenes(db) {
   return db;
 }
 
+// Convierte las rutas de public/ ("/img/x.jpg") en rutas relativas a la base de la app,
+// para que las imágenes carguen también en una subcarpeta como /SIGR/ de GitHub Pages.
+export function rutaImagen(src) {
+  if (!src || /^(https?:|data:)/.test(src)) return src;
+  return import.meta.env.BASE_URL + src.replace(/^\/+/, "");
+}
+
 export function guardar(db) {
   if (hayLocalStorage()) localStorage.setItem(CLAVE, JSON.stringify(db));
   else memoria = db;
