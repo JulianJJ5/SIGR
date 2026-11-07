@@ -40,6 +40,14 @@ npm run preview   # sirve la compilación de dist/
 
 Versión publicada: https://julianjj5.github.io/SIGR/ (se actualiza sola en cada push a `main`).
 
+## API REST (desde v1.2.0)
+
+```bash
+npm run api       # API en http://localhost:3200/api (y la página compilada en http://localhost:3200)
+```
+
+El menú y las reservas se guardan en la API con `fetch`; la dirección está en `API_URL` (`src/api.js`). Si la API no está corriendo, la página trabaja en modo local y lo indica arriba. Rutas, códigos y formato de errores: [server/README.md](server/README.md).
+
 ## Usuarios de demostración
 
 | Rol | Usuario | Contraseña | Ve |
