@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
-import { db, sesion, mutar } from "../store.js";
+import { db, sesion, mutar, apiDisponible, enviar, ponerEn } from "../store.js";
+import { api } from "../api.js";
 import { rutaImagen } from "../db/storage.js";
 import * as menu from "../services/menu.js";
 import { crearPedido } from "../services/pedidos.js";
@@ -44,20 +45,62 @@ function enviarPedido() {
 }
 
 // ----- CRUD (administrador) -----
+// Con la API activa, los cambios del menú se envían al servidor con fetch; sin API, se guardan solo en local.
 const nuevaCategoria = ref("");
-const formPlato = reactive({ id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagen: "" });
-function limpiarPlato() { Object.assign(formPlato, { id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagen: "" }); }
-function editar(p) { Object.assign(formPlato, { ...p }); window.scrollTo({ top: 0, behavior: "smooth" }); }
-function guardarPlato() {
-  const ok = formPlato.id
-    ? mutar((d) => menu.editarPlato(d, formPlato.id, formPlato), "Plato actualizado")
-    : mutar((d) => menu.crearPlato(d, formPlato), "Plato creado");
-  if (ok) limpiarPlato();
+const vacio = { id: null, nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagen: "" };
+const formPlato = reactive({ ...vacio });
+const errores = ref({});
+function limpiarPlato() { Object.assign(formPlato, vacio); errores.value = {}; }
+function editar(p) { Object.assign(formPlato, { ...p }); errores.value = {}; window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+const cuerpoPlato = () => ({
+  nombre: formPlato.nombre,
+  descripcion: formPlato.descripcion,
+  precio: formPlato.precio === "" ? null : Number(formPlato.precio),
+  categoriaId: formPlato.categoriaId === "" ? null : Number(formPlato.categoriaId),
+  disponible: formPlato.disponible,
+  imagen: formPlato.imagen,
+});
+
+async function guardarPlato() {
+  if (!apiDisponible.value) {
+    const ok = formPlato.id
+      ? mutar((d) => menu.editarPlato(d, formPlato.id, formPlato), "Plato actualizado (modo local)")
+      : mutar((d) => menu.crearPlato(d, formPlato), "Plato creado (modo local)");
+    if (ok) limpiarPlato();
+    return;
+  }
+  const r = formPlato.id
+    ? await enviar(() => api("PUT", `/menu/${formPlato.id}`, cuerpoPlato()), (d, p) => ponerEn(d.platos, p), "Plato actualizado")
+    : await enviar(() => api("POST", "/menu", cuerpoPlato()), (d, p) => ponerEn(d.platos, p), "Plato creado");
+  errores.value = r.campos;
+  if (r.ok) limpiarPlato();
 }
-function crearCategoria() { if (mutar((d) => menu.crearCategoria(d, nuevaCategoria.value), "Categoría creada")) nuevaCategoria.value = ""; }
-function renombrar(c) {
+
+async function eliminarPlato(p) {
+  if (!apiDisponible.value) return mutar((d) => menu.eliminarPlato(d, p.id), "Plato eliminado (modo local)");
+  await enviar(() => api("DELETE", `/menu/${p.id}`), (d) => { d.platos = d.platos.filter((x) => x.id !== p.id); }, "Plato eliminado");
+}
+
+async function crearCategoria() {
+  if (!apiDisponible.value) {
+    if (mutar((d) => menu.crearCategoria(d, nuevaCategoria.value), "Categoría creada (modo local)")) nuevaCategoria.value = "";
+    return;
+  }
+  const r = await enviar(() => api("POST", "/categorias", { nombre: nuevaCategoria.value }), (d, c) => ponerEn(d.categorias, c), "Categoría creada");
+  if (r.ok) nuevaCategoria.value = "";
+}
+
+async function renombrar(c) {
   const nombre = prompt("Nuevo nombre de la categoría", c.nombre);
-  if (nombre) mutar((d) => menu.editarCategoria(d, c.id, nombre), "Categoría actualizada");
+  if (!nombre) return;
+  if (!apiDisponible.value) return mutar((d) => menu.editarCategoria(d, c.id, nombre), "Categoría actualizada (modo local)");
+  await enviar(() => api("PUT", `/categorias/${c.id}`, { nombre }), (d, cat) => ponerEn(d.categorias, cat), "Categoría actualizada");
+}
+
+async function eliminarCategoria(c) {
+  if (!apiDisponible.value) return mutar((d) => menu.eliminarCategoria(d, c.id), "Categoría eliminada (modo local)");
+  await enviar(() => api("DELETE", `/categorias/${c.id}`), (d) => { d.categorias = d.categorias.filter((x) => x.id !== c.id); }, "Categoría eliminada");
 }
 </script>
 
@@ -72,26 +115,29 @@ function renombrar(c) {
     <section>
       <div v-if="esAdmin" class="tarjeta">
         <h3>{{ formPlato.id ? "Editar plato" : "Nuevo plato" }}</h3>
-        <form class="rejilla" @submit.prevent="guardarPlato">
-          <label>Nombre <input v-model="formPlato.nombre" required /></label>
-          <label>Precio (COP) <input v-model="formPlato.precio" type="number" min="1" required /></label>
+        <form class="rejilla" novalidate data-testid="form-plato" @submit.prevent="guardarPlato">
+          <label>Nombre <input v-model="formPlato.nombre" name="nombre" data-testid="plato-nombre" required />
+            <small v-if="errores.nombre" class="error-campo" data-testid="error-nombre">{{ errores.nombre }}</small></label>
+          <label>Precio (COP) <input v-model="formPlato.precio" name="precio" type="number" min="1" data-testid="plato-precio" required />
+            <small v-if="errores.precio" class="error-campo" data-testid="error-precio">{{ errores.precio }}</small></label>
           <label>Categoría
-            <select v-model.number="formPlato.categoriaId" required>
+            <select v-model.number="formPlato.categoriaId" name="categoriaId" data-testid="plato-categoria" required>
               <option value="" disabled>Seleccione…</option>
               <option v-for="c in db.categorias" :key="c.id" :value="c.id">{{ c.nombre }}</option>
             </select>
+            <small v-if="errores.categoriaId" class="error-campo" data-testid="error-categoriaId">{{ errores.categoriaId }}</small>
           </label>
-          <label>Descripción <input v-model="formPlato.descripcion" /></label>
+          <label>Descripción <input v-model="formPlato.descripcion" name="descripcion" data-testid="plato-descripcion" /></label>
           <label>Imagen (URL o ruta /img/…) <input v-model="formPlato.imagen" placeholder="/img/empanadas.jpg" /></label>
           <label class="check"><input v-model="formPlato.disponible" type="checkbox" /> Disponible</label>
           <div class="fila">
-            <button type="submit">{{ formPlato.id ? "Guardar cambios" : "Crear plato" }}</button>
+            <button type="submit" data-testid="plato-guardar">{{ formPlato.id ? "Guardar cambios" : "Crear plato" }}</button>
             <button v-if="formPlato.id" type="button" class="secundario" @click="limpiarPlato">Cancelar</button>
           </div>
         </form>
         <h3>Categorías</h3>
         <form class="fila" @submit.prevent="crearCategoria">
-          <input v-model="nuevaCategoria" placeholder="Nueva categoría" />
+          <input v-model="nuevaCategoria" placeholder="Nueva categoría" data-testid="categoria-nombre" />
           <button type="submit">Agregar</button>
         </form>
       </div>
@@ -101,11 +147,11 @@ function renombrar(c) {
           <h3>{{ c.nombre }}</h3>
           <div v-if="esAdmin" class="fila">
             <button class="mini secundario" @click="renombrar(c)">Renombrar</button>
-            <button class="mini peligro" @click="mutar((d) => menu.eliminarCategoria(d, c.id), 'Categoría eliminada')">Eliminar</button>
+            <button class="mini peligro" @click="eliminarCategoria(c)">Eliminar</button>
           </div>
         </div>
         <p v-if="!c.platos.length" class="nota">Sin platos.</p>
-        <div v-for="p in c.platos" :key="p.id" class="plato" :class="{ apagado: !p.disponible }">
+        <div v-for="p in c.platos" :key="p.id" class="plato" :class="{ apagado: !p.disponible }" :data-testid="`plato-${p.id}`">
           <img v-if="p.imagen" class="miniatura" :src="rutaImagen(p.imagen)" :alt="p.nombre" loading="lazy" />
           <div v-else class="miniatura vacia">🍽️</div>
           <div class="info-plato">
@@ -116,7 +162,7 @@ function renombrar(c) {
             <span class="precio">{{ pesos(p.precio) }}</span>
             <template v-if="esAdmin">
               <button class="mini secundario" @click="editar(p)">Editar</button>
-              <button class="mini peligro" @click="mutar((d) => menu.eliminarPlato(d, p.id), 'Plato eliminado')">Eliminar</button>
+              <button class="mini peligro" @click="eliminarPlato(p)">Eliminar</button>
             </template>
             <template v-else>
               <button class="mini secundario" @click="quitar(p)">−</button>

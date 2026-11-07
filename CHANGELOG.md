@@ -7,6 +7,16 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 Los cambios posteriores a la línea base se registran aquí y se controlan mediante solicitudes de cambio (GitHub Issues) y ramas `feature/` o `fix/` que se integran por `develop`.
 
+## [1.2.0] - 2026-11-07
+
+### Agregado
+- API REST con Express (`npm run api`, puerto 3200), con CORS y datos en memoria. Rutas de menú, categorías, reservas y pedidos, y `POST /api/reset` para las pruebas.
+- Respuestas 200, 201, 400, 404 y 409, con errores en JSON con el formato `{ "error", "campos" }`. La API aplica las mismas reglas del SIGR (horario de 12:00 a 22:00, mesa más pequeña libre, precio mayor que 0, flujo de estados del pedido).
+- La página usa la API: los formularios de crear y editar plato, las categorías y las reservas envían los datos con `fetch` y muestran los errores debajo de cada campo. La dirección de la API está en `API_URL` (`src/api.js`).
+- Modo local automático cuando la API no responde, con un indicador en la barra superior.
+- Atributos `data-testid` en formularios, botones, mensajes y tablas, para las pruebas automatizadas.
+- Pruebas de integración de la API (`tests/api.test.js`) y README de la API (`server/README.md`).
+
 ## [1.1.1] - 2026-11-07
 
 ### Corregido
@@ -37,7 +47,8 @@ Los cambios posteriores a la línea base se registran aquí y se controlan media
 ### Corregido
 - Las fechas de pedidos, facturas, reservas y cierres usan el día local y no el UTC, para que la caja no cambie de día a las 7 p. m. (hora de Colombia).
 
-[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.1.1...HEAD
+[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/JulianJJ5/SIGR/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/JulianJJ5/SIGR/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/JulianJJ5/SIGR/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JulianJJ5/SIGR/releases/tag/v1.0.0
