@@ -7,6 +7,13 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 Los cambios posteriores a la línea base se registran aquí y se controlan mediante solicitudes de cambio (GitHub Issues) y ramas `feature/` o `fix/` que se integran por `develop`.
 
+## [1.1.0] - 2026-11-07
+
+### Agregado
+- Fotos de stock gratuitas de Pexels: banner en el menú, fondo en el inicio de sesión y una miniatura por plato (créditos en `docs/CREDITOS_IMAGENES.md`).
+- Campo de imagen (URL o ruta) en el formulario de platos del administrador.
+- Migración automática: los datos guardados con v1.0.0 reciben la imagen de cada plato de demostración.
+
 ## [1.0.0] - 2026-11-07 · Línea base
 
 ### Agregado
@@ -24,5 +31,6 @@ Los cambios posteriores a la línea base se registran aquí y se controlan media
 ### Corregido
 - Las fechas de pedidos, facturas, reservas y cierres usan el día local y no el UTC, para que la caja no cambie de día a las 7 p. m. (hora de Colombia).
 
-[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.0.0...HEAD
+[Sin publicar]: https://github.com/JulianJJ5/SIGR/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/JulianJJ5/SIGR/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/JulianJJ5/SIGR/releases/tag/v1.0.0

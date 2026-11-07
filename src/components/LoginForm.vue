@@ -17,6 +17,7 @@ function demo(u, c) { usuario.value = u; clave.value = c; ingresar(); }
 </script>
 
 <template>
+  <div class="fondo-login">
   <section class="tarjeta login">
     <h2>Iniciar sesión</h2>
     <form @submit.prevent="ingresar">
@@ -31,4 +32,5 @@ function demo(u, c) { usuario.value = u; clave.value = c; ingresar(); }
       <button class="secundario" @click="demo('cliente', 'cliente123')">Cliente</button>
     </div>
   </section>
+  </div>
 </template>

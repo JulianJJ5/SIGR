@@ -10,13 +10,22 @@ const hayLocalStorage = () => typeof localStorage !== "undefined";
 export function cargar() {
   if (hayLocalStorage()) {
     const crudo = localStorage.getItem(CLAVE);
-    if (crudo) return JSON.parse(crudo);
+    if (crudo) return completarImagenes(JSON.parse(crudo));
     const nuevo = datosIniciales();
     guardar(nuevo);
     return nuevo;
   }
   if (!memoria) memoria = datosIniciales();
   return memoria;
+}
+
+// Los datos guardados antes de v1.1.0 no traen imagen en los platos: se completan desde el seed.
+function completarImagenes(db) {
+  const base = datosIniciales().platos;
+  for (const p of db.platos) {
+    if (p.imagen === undefined) p.imagen = base.find((b) => b.id === p.id)?.imagen || "";
+  }
+  return db;
 }
 
 export function guardar(db) {
